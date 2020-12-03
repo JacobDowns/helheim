@@ -1,5 +1,0 @@
-addpath /home/jake/trunk-jpl/bin/ /home/jake/trunk-jpl/lib/
-
-load('model.mat');
-md.cluster=generic('name', oshostname, 'np', 6);
-md=solve(md,'Transient');
