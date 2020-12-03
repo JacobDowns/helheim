@@ -1,0 +1,26 @@
+addpath /home/jake/trunk-jpl/bin/ /home/jake/trunk-jpl/lib/
+
+% Data
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+file_name1 = '/media/jake/drive1/data/data/h5/geometry_data.h5';
+file_name2 = '/media/jake/drive1/data/data/h5/velocity_data.h5';
+
+x = double(h5read(file_name1, '/x'));
+y = double(h5read(file_name1, '/y'));
+x = x(: ,1);
+y = y(1 ,:)';
+velx = double(h5read(file_name2, '/vx'));
+vely = double(h5read(file_name2, '/vy'));
+
+
+% Create mesh
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+md=triangle(model,'../data/upernavik_domain.exp',750);
+md.miscellaneous.name = 'Uppernavik';
+vx  = InterpFromGridToMesh(x, y, flipud(velx'), md.mesh.x, md.mesh.y, 0);
+vy  = InterpFromGridToMesh(x, y, flipud(vely'), md.mesh.x, md.mesh.y, 0);
+v = sqrt(vx.^2 + vy.^2);
+md=bamg(md, 'hmax', 1333, 'hmin', 200, 'gradation', 2.5, 'field', v, 'err', 2, 'anisomax', 20);
+save model0 md;
